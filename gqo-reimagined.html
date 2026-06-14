@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GQO — Guest Quest Online: Reimagined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0a0a0f;
+    --bg2:     #10101a;
+    --bg3:     #16162a;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text:    #e8e6f0;
+    --muted:   #7a7890;
+    --dim:     #44425a;
+
+    --common:    #9b9b9b;
+    --uncommon:  #1dc87a;
+    --rare:      #4a9eff;
+    --epic:      #a855f7;
+    --legendary: #f59e0b;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    padding: 36px 2rem 0;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--legendary);
+    margin-bottom: 8px;
+  }
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .hero-title span { color: var(--legendary); }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* ── PILL TABS (like the screenshot) ── */
+  .pill-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .ptab {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .ptab:hover { color: var(--text); border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+  .ptab.active { background: #1e1c30; color: #fff; border-color: rgba(255,255,255,0.25); }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 0 2rem 80px; }
+
+  /* ── DUNGEON PANELS ── */
+  .dungeon-panel { display: none; }
+  .dungeon-panel.active { display: block; }
+
+  .dungeon-banner {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    background: var(--bg2);
+    margin-bottom: 20px;
+  }
+  .dungeon-icon-wrap {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .dungeon-banner h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 2px;
+  }
+  .dungeon-banner p { font-size: 12px; color: var(--muted); }
+  .dungeon-badge {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 11px; border-radius: 6px; border: 0.5px solid;
+  }
+
+  /* ── RARITY LEGEND ── */
+  .rarity-legend {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .rarity-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500;
+    color: var(--muted);
+  }
+  .rarity-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── WEAPON CARDS ── */
+  .weapons-grid { display: grid; gap: 8px; }
+
+  .wcard {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.12s;
+  }
+  .wcard:hover { border-color: var(--border2); }
+
+  .wcard-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .rarity-stripe { width: 3px; border-radius: 2px; align-self: stretch; min-height: 18px; }
+  .wcard-name { font-weight: 500; font-size: 14px; color: #fff; flex: 1; }
+  .rarity-tag {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 3px 9px; border-radius: 999px;
+  }
+
+  .wcard-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0;
+  }
+  .wstat { padding: 9px 14px; border-right: 0.5px solid var(--border); }
+  .wstat:last-child { border-right: none; }
+  .wstat-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; }
+  .wstat-val { font-size: 13px; color: var(--text); }
+
+  .drop-bar-wrap { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 4px; }
+  .drop-bar { height: 100%; border-radius: 2px; }
+
+  /* color helpers */
+  .c-common    { color: var(--common); }
+  .c-uncommon  { color: var(--uncommon); }
+  .c-rare      { color: var(--rare); }
+  .c-epic      { color: var(--epic); }
+  .c-legendary { color: var(--legendary); }
+
+  .bg-common    { background: var(--common); }
+  .bg-uncommon  { background: var(--uncommon); }
+  .bg-rare      { background: var(--rare); }
+  .bg-epic      { background: var(--epic); }
+  .bg-legendary { background: var(--legendary); }
+
+  .tag-common    { background: rgba(155,155,155,0.1); color: var(--common); }
+  .tag-uncommon  { background: rgba(29,200,122,0.1); color: var(--uncommon); }
+  .tag-rare      { background: rgba(74,158,255,0.1); color: var(--rare); }
+  .tag-epic      { background: rgba(168,85,247,0.1); color: var(--epic); }
+  .tag-legendary { background: rgba(245,158,11,0.1); color: var(--legendary); }
+
+  /* ── CREDITS ── */
+  .credits-section { padding-top: 48px; }
+  .section-eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+  }
+  .credits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .credit-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.12s;
+  }
+  .credit-card:hover { border-color: var(--border2); }
+  .credit-accent { width: 18px; height: 2px; border-radius: 1px; margin-bottom: 10px; }
+  .credit-role { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 4px; }
+  .credit-name { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+  .credit-handle { font-size: 12px; color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid var(--border);
+    max-width: 1100px; margin: 0 auto;
+    padding: 28px 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-logo { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900; color: #fff; }
+  .footer-logo span { color: var(--legendary); }
+  footer p { font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="hero-eyebrow">Guest Quest Online</div>
+  <h1 class="hero-title"><span>GQO</span> Reimagined</h1>
+  <p class="hero-sub">Weapon drop tables across all four dungeons</p>
+
+  <!-- Pill tabs -->
+  <div class="pill-tabs">
+    <button class="ptab active" onclick="showDungeon(0)">I — The Rusted Crypt</button>
+    <button class="ptab" onclick="showDungeon(1)">II — Frostpeak Sanctum</button>
+    <button class="ptab" onclick="showDungeon(2)">III — Emberfall Bastion</button>
+    <button class="ptab" onclick="showDungeon(3)">IV — The Void Breach</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Rarity legend -->
+  <div class="rarity-legend">
+    <div class="rarity-pill"><div class="dot bg-common"></div>Common</div>
+    <div class="rarity-pill"><div class="dot bg-uncommon"></div>Uncommon</div>
+    <div class="rarity-pill"><div class="dot bg-rare"></div>Rare</div>
+    <div class="rarity-pill"><div class="dot bg-epic"></div>Epic</div>
+    <div class="rarity-pill"><div class="dot bg-legendary"></div>Legendary</div>
+  </div>
+
+  <!-- ── DUNGEON I ── -->
+  <div id="d0" class="dungeon-panel active">
+    <div class="dungeon-banner">
+      <div class="dungeon-icon-wrap" style="background:rgba(139,115,85,0.15);">💀</div>
+      <div>
+        <h3>The Rusted Crypt</h3>
+        <p>Recommended level 10–20 · Undead / Skeleton enemies · Ashen Vale</p>
+      </div>
+      <div class="dungeon-badge" style="background:rgba(139,115,85,0.1);color:#b89a6a;border-color:rgba(139,115,85,0.3);">Dungeon I</div>
+    </div>
+    <div class="weapons-grid">
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-common"></div><span class="wcard-name">Corroded Iron Sword</span><span class="rarity-tag tag-common">Common</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Sword · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">14–20 Phys</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">—</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Skeleton Soldier</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-common">22%</div><div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:22%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-common"></div><span class="wcard-name">Dusty Militia Bow</span><span class="rarity-tag tag-common">Common</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Bow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">12–18 Phys</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">—</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Archer Skeleton</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-common">18%</div><div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:18%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Bonecleaver Axe</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Axe · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">28–36 Phys</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Bleed on crit</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Crypt Guardian</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">9%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:9%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Hollow Knight Mace</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Mace · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">24–32 Phys</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">+10% Stun</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Hollow Knight</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">7%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:7%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-rare"></div><span class="wcard-name">Phantom Shard Dagger</span><span class="rarity-tag tag-rare">Rare</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Dagger · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">22–28 Phys +8 Shadow</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Life steal 3%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Wraith Zealot</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-rare">3.5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:3.5%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-legendary"></div><span class="wcard-name">Gravewarden's Reaper</span><span class="rarity-tag tag-legendary">Legendary</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Scythe · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">60–80 Phys +20 Shadow</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Soul Harvest passive</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Archlich Morven (Boss)</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-legendary">0.8%</div><div class="drop-bar-wrap"><div class="drop-bar bg-legendary" style="width:0.8%"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DUNGEON II ── -->
+  <div id="d1" class="dungeon-panel">
+    <div class="dungeon-banner">
+      <div class="dungeon-icon-wrap" style="background:rgba(74,158,255,0.1);">❄️</div>
+      <div>
+        <h3>Frostpeak Sanctum</h3>
+        <p>Recommended level 25–40 · Ice / Elemental enemies · Glacial Spires</p>
+      </div>
+      <div class="dungeon-badge" style="background:rgba(74,158,255,0.1);color:#4a9eff;border-color:rgba(74,158,255,0.25);">Dungeon II</div>
+    </div>
+    <div class="weapons-grid">
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-common"></div><span class="wcard-name">Frostbitten Spear</span><span class="rarity-tag tag-common">Common</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Spear · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">26–34 Phys +5 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Slow 5%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Ice Sentinel</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-common">18%</div><div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:18%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Glacial Wand</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Wand · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">18–24 Magic +12 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Freeze chance 8%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Frost Mage Eidolon</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">7%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:7%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Shivering Kris</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Dagger · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">20–26 Phys +9 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Crit +5%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Shard Sprite</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">8%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:8%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-rare"></div><span class="wcard-name">Permafrost Blade</span><span class="rarity-tag tag-rare">Rare</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Greatsword · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">44–58 Phys +18 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Permafrost shatter</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Colossus of Rime</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-rare">4%</div><div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:4%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-epic"></div><span class="wcard-name">Heartfreeze Staff</span><span class="rarity-tag tag-epic">Epic</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Staff · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">38–50 Magic +30 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Frozen Nova on kill</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Aurikis the Frozen (Boss)</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-epic">1.5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:1.5%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-legendary"></div><span class="wcard-name">Winterborn Longbow</span><span class="rarity-tag tag-legendary">Legendary</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Bow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">55–72 Phys +38 Frost</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Blizzard arrow storm</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Aurikis the Frozen (Boss)</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-legendary">0.6%</div><div class="drop-bar-wrap"><div class="drop-bar bg-legendary" style="width:0.6%"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DUNGEON III ── -->
+  <div id="d2" class="dungeon-panel">
+    <div class="dungeon-banner">
+      <div class="dungeon-icon-wrap" style="background:rgba(201,80,42,0.12);">🔥</div>
+      <div>
+        <h3>Emberfall Bastion</h3>
+        <p>Recommended level 45–60 · Infernal / Demon enemies · Scorchlands</p>
+      </div>
+      <div class="dungeon-badge" style="background:rgba(201,80,42,0.1);color:#e06030;border-color:rgba(201,80,42,0.3);">Dungeon III</div>
+    </div>
+    <div class="weapons-grid">
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-common"></div><span class="wcard-name">Scorched Iron Dagger</span><span class="rarity-tag tag-common">Common</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Dagger · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">30–38 Phys +6 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">—</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Ember Imp</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-common">16%</div><div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:16%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Cinder Shortsword</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Sword · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">36–44 Phys +10 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Ignite on hit 10%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Hellbound Grunt</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">12%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:12%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-rare"></div><span class="wcard-name">Molten Chain Flail</span><span class="rarity-tag tag-rare">Rare</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Flail · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">40–52 Phys +16 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">AoE splash burn</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Hellbound Brute</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-rare">5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:5%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-epic"></div><span class="wcard-name">Ashen Warbow</span><span class="rarity-tag tag-epic">Epic</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Bow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">48–64 Phys +22 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Fire arrow volley</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Demon Archon Serrath</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-epic">2%</div><div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:2%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-epic"></div><span class="wcard-name">Brimstone War Hammer</span><span class="rarity-tag tag-epic">Epic</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Hammer · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">65–80 Phys +25 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Lava Smash active</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Demon Archon Serrath</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-epic">1.8%</div><div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:1.8%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-legendary"></div><span class="wcard-name">Soulcinder — Blade of Ruin</span><span class="rarity-tag tag-legendary">Legendary</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Greatsword · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">90–120 Phys +40 Fire</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Hellfire aura + burn</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Ignar, Lord of Ash (Boss)</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-legendary">0.5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-legendary" style="width:0.5%"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DUNGEON IV ── -->
+  <div id="d3" class="dungeon-panel">
+    <div class="dungeon-banner">
+      <div class="dungeon-icon-wrap" style="background:rgba(168,85,247,0.1);">🌌</div>
+      <div>
+        <h3>The Void Breach</h3>
+        <p>Recommended level 65–80 · Cosmic / Eldritch enemies · Shattered Expanse</p>
+      </div>
+      <div class="dungeon-badge" style="background:rgba(168,85,247,0.1);color:#a855f7;border-color:rgba(168,85,247,0.3);">Dungeon IV</div>
+    </div>
+    <div class="weapons-grid">
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-uncommon"></div><span class="wcard-name">Void-Touched Shortsword</span><span class="rarity-tag tag-uncommon">Uncommon</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Sword · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">44–56 Phys +12 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Resist reduction 5%</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Void Crawler</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-uncommon">10%</div><div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:10%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-rare"></div><span class="wcard-name">Null-Edge Rapier</span><span class="rarity-tag tag-rare">Rare</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Rapier · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">52–68 Phys +20 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Phase shift on parry</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Void Stalker</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-rare">6%</div><div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:6%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-rare"></div><span class="wcard-name">Riftborn Crossbow</span><span class="rarity-tag tag-rare">Rare</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Crossbow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">58–74 Phys +18 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Piercing void bolt</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Riftborn Colossus</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-rare">5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:5%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-epic"></div><span class="wcard-name">Starshatter Hammer</span><span class="rarity-tag tag-epic">Epic</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Hammer · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">80–100 Phys +35 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Singularity slam</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Riftborn Colossus</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-epic">2.5%</div><div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:2.5%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-epic"></div><span class="wcard-name">Eclipsebound Bow</span><span class="rarity-tag tag-epic">Epic</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Bow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">64–82 Phys +28 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Eclipse burst salvo</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">The Watcher Between</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-epic">2%</div><div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:2%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="wcard">
+        <div class="wcard-head"><div class="rarity-stripe bg-legendary"></div><span class="wcard-name">Oblivion — The Last Word</span><span class="rarity-tag tag-legendary">Legendary</span></div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Catalyst · Off-hand</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">100–140 Magic +60 Void</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Reality collapse pulse</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">The Undying Null (Boss)</div></div>
+          <div class="wstat"><div class="wstat-label">Drop rate</div><div class="wstat-val c-legendary">0.3%</div><div class="drop-bar-wrap"><div class="drop-bar bg-legendary" style="width:0.3%"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CREDITS ── -->
+  <div class="credits-section">
+    <div class="section-eyebrow">Credits</div>
+    <div class="credits-grid">
+
+      <div class="credit-card">
+        <div class="credit-accent bg-legendary"></div>
+        <div class="credit-role">Project Lead</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-epic"></div>
+        <div class="credit-role">Lead Developer</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-rare"></div>
+        <div class="credit-role">Dungeon Designer</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-rare"></div>
+        <div class="credit-role">Dungeon Designer</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-uncommon"></div>
+        <div class="credit-role">Loot System Designer</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-uncommon"></div>
+        <div class="credit-role">Balance Designer</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent" style="background:#e06030"></div>
+        <div class="credit-role">Art Director</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-common"></div>
+        <div class="credit-role">QA Lead</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+      <div class="credit-card">
+        <div class="credit-accent bg-common"></div>
+        <div class="credit-role">Community Manager</div>
+        <div class="credit-name">Template Name</div>
+        <div class="credit-handle">@handle</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo"><span>GQO</span> Reimagined</div>
+  <p>Fan-made loot reference · Not affiliated with original GQO developers</p>
+</footer>
+
+<script>
+function showDungeon(i) {
+  document.querySelectorAll('.ptab').forEach((t,j) => t.classList.toggle('active', i===j));
+  document.querySelectorAll('.dungeon-panel').forEach((p,j) => p.classList.toggle('active', i===j));
+}
+</script>
+</body>
+</html>
