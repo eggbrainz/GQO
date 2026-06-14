@@ -234,14 +234,23 @@
 <div class="site-header">
   <div class="hero-eyebrow">Guest Quest Online</div>
   <h1 class="hero-title"><span>GQO</span> Reimagined</h1>
-  <p class="hero-sub">Weapon drop tables across all four dungeons</p>
+  <p class="hero-sub">Weapon drop tables across all five dungeons</p>
 
-  <!-- Pill tabs -->
+  <!-- ============================================================
+       TABS — one <button> per dungeon.
+       To rename a tab: change the text between > and </button>
+       The number inside showDungeon(X) must match the dungeon's
+       id="dX" panel below — don't change those numbers.
+       To add a 6th dungeon: copy a button, change the text,
+       set onclick="showDungeon(5)" and add a panel with id="d5".
+  ============================================================ -->
   <div class="pill-tabs">
     <button class="ptab active" onclick="showDungeon(0)">I — The Rusted Crypt</button>
     <button class="ptab" onclick="showDungeon(1)">II — Frostpeak Sanctum</button>
     <button class="ptab" onclick="showDungeon(2)">III — Emberfall Bastion</button>
     <button class="ptab" onclick="showDungeon(3)">IV — The Void Breach</button>
+    <!-- EDIT: Change tab name below. Keep showDungeon(4) as-is. -->
+    <button class="ptab" onclick="showDungeon(4)">V — The Celestial Tomb</button>
   </div>
 </div>
 
@@ -579,6 +588,179 @@
 
     </div>
   </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       DUNGEON V — THE CELESTIAL TOMB
+       Panel id must stay "d4" (matches the tab's showDungeon(4)).
+
+       HOW TO EDIT THIS DUNGEON:
+         • Dungeon name   → change the <h3> text
+         • Level / theme  → change the <p> text in the banner
+         • Badge label    → change "Dungeon V" text in dungeon-badge
+         • Icon emoji     → swap the emoji inside dungeon-icon-wrap
+         • Banner color   → change the rgba() values in the banner styles
+           (copy the style from another dungeon and adjust the RGB)
+
+       HOW TO EDIT A WEAPON CARD:
+         • Rarity color   → change "bg-RARITY" and "tag-RARITY" and "c-RARITY"
+                            Options: bg-common / bg-uncommon / bg-rare / bg-epic / bg-legendary
+         • Weapon name    → change the text inside <span class="wcard-name">
+         • Rarity label   → change the text inside <span class="rarity-tag">
+         • Type           → first wstat, second line
+         • Damage         → second wstat, second line
+         • Effect         → third wstat (use — if none)
+         • Dropped by     → fourth wstat
+         • Drop rate %    → fifth wstat — change the number in c-RARITY div
+                            AND change the style="width:X%" on the drop-bar div
+                            (e.g. 5% drop rate → width:5%)
+
+       TO ADD A NEW WEAPON: copy one full <div class="wcard">...</div>
+       block and paste it before the closing </div> of weapons-grid.
+
+       TO REMOVE A WEAPON: delete one full <div class="wcard">...</div> block.
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="d4" class="dungeon-panel">
+
+    <!-- BANNER — edit name, description, badge, emoji, and colors here -->
+    <div class="dungeon-banner">
+      <div class="dungeon-icon-wrap" style="background:rgba(200,170,255,0.1);">
+        ✨<!-- EDIT: swap this emoji for any theme icon -->
+      </div>
+      <div>
+        <h3>The Celestial Tomb</h3><!-- EDIT: dungeon name -->
+        <p>Recommended level 85–100 · Divine / Corrupted Angel enemies · The Astral Ruins</p>
+        <!-- EDIT: level range · enemy type · location name -->
+      </div>
+      <!-- EDIT: change badge text, and adjust the rgba colors to match your theme -->
+      <div class="dungeon-badge" style="background:rgba(200,170,255,0.1);color:#c8aaff;border-color:rgba(200,170,255,0.3);">Dungeon V</div>
+    </div>
+
+    <div class="weapons-grid">
+
+      <!-- ── WEAPON 1 of 6 — Common ── -->
+      <!-- EDIT: rarity = common | uncommon | rare | epic | legendary -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-common"></div><!-- EDIT: bg-RARITY -->
+          <span class="wcard-name">Tarnished Halo Blade</span><!-- EDIT: weapon name -->
+          <span class="rarity-tag tag-common">Common</span><!-- EDIT: tag-RARITY and label -->
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Sword · 1H</div></div><!-- EDIT -->
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">55–70 Phys</div></div><!-- EDIT -->
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">—</div></div><!-- EDIT: use — if no effect -->
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Fallen Seraph</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-common">14%</div><!-- EDIT: c-RARITY and percentage -->
+            <div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:14%"></div></div><!-- EDIT: bg-RARITY and width = same % -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WEAPON 2 of 6 — Common ── -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-common"></div>
+          <span class="wcard-name">Dust of Heaven Dagger</span><!-- EDIT -->
+          <span class="rarity-tag tag-common">Common</span>
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Dagger · 1H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">44–58 Phys</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">—</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Tomb Warden</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-common">11%</div>
+            <div class="drop-bar-wrap"><div class="drop-bar bg-common" style="width:11%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WEAPON 3 of 6 — Uncommon ── -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-uncommon"></div>
+          <span class="wcard-name">Aureate War Spear</span><!-- EDIT -->
+          <span class="rarity-tag tag-uncommon">Uncommon</span>
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Spear · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">70–88 Phys +15 Holy</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Smite on crit</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Celestial Executioner</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-uncommon">6%</div>
+            <div class="drop-bar-wrap"><div class="drop-bar bg-uncommon" style="width:6%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WEAPON 4 of 6 — Rare ── -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-rare"></div>
+          <span class="wcard-name">Sanctum Crossbow</span><!-- EDIT -->
+          <span class="rarity-tag tag-rare">Rare</span>
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Crossbow · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">78–96 Phys +22 Holy</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Holy bolt pierce</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Archangel Remnant</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-rare">3%</div>
+            <div class="drop-bar-wrap"><div class="drop-bar bg-rare" style="width:3%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WEAPON 5 of 6 — Epic ── -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-epic"></div>
+          <span class="wcard-name">Throne of Ash Greatsword</span><!-- EDIT -->
+          <span class="rarity-tag tag-epic">Epic</span>
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Greatsword · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">110–140 Phys +40 Holy</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Divine judgment AoE</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">Seraph Prime (Boss)</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-epic">1.2%</div>
+            <div class="drop-bar-wrap"><div class="drop-bar bg-epic" style="width:1.2%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WEAPON 6 of 6 — Legendary ── -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <div class="rarity-stripe bg-legendary"></div>
+          <span class="wcard-name">Godfall — Edge of Creation</span><!-- EDIT -->
+          <span class="rarity-tag tag-legendary">Legendary</span>
+        </div>
+        <div class="wcard-body">
+          <div class="wstat"><div class="wstat-label">Type</div><div class="wstat-val">Catalyst · 2H</div></div>
+          <div class="wstat"><div class="wstat-label">Damage</div><div class="wstat-val">150–200 Magic +80 Holy</div></div>
+          <div class="wstat"><div class="wstat-label">Effect</div><div class="wstat-val">Genesis burst · +25% all dmg</div></div>
+          <div class="wstat"><div class="wstat-label">Dropped by</div><div class="wstat-val">The First God (Boss)</div></div><!-- EDIT -->
+          <div class="wstat">
+            <div class="wstat-label">Drop rate</div>
+            <div class="wstat-val c-legendary">0.1%</div><!-- EDIT: keep width matching -->
+            <div class="drop-bar-wrap"><div class="drop-bar bg-legendary" style="width:0.1%"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ── END DUNGEON V ── -->
 
   <!-- ── CREDITS ── -->
   <div class="credits-section">
